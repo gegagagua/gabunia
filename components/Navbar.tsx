@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { LANGUAGES, CONTENT } from "@/data/content";
@@ -42,12 +43,12 @@ export function Navbar() {
       )}>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* logo */}
-          <a href="#" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-lg bg-brand-500/15 border border-brand-500/25 flex items-center justify-center text-brand-400 font-mono text-sm font-bold group-hover:bg-brand-500/25 group-hover:border-brand-400/40 group-hover:shadow-[0_0_16px_rgba(74,222,128,0.2)] transition-all duration-300">
               VG
             </div>
             <span className="font-display font-semibold text-white text-sm tracking-wide hidden sm:block">{content.brand}</span>
-          </a>
+          </Link>
 
           {/* desktop links */}
           <div className="hidden md:flex items-center gap-1">
@@ -80,6 +81,13 @@ export function Navbar() {
                 </button>
               ))}
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(content.donateUrl, "_blank")}
+            >
+              {content.donate}
+            </Button>
             <Button
               variant="glow"
               size="sm"
@@ -126,6 +134,9 @@ export function Navbar() {
               </a>
             ))}
             <div className="pt-2 border-t border-white/[0.06]">
+              <Button variant="outline" size="sm" className="w-full mb-2" onClick={() => window.open(content.donateUrl, "_blank")}>
+                {content.donate} ↗
+              </Button>
               <Button variant="glow" size="sm" className="w-full" onClick={() => window.open("https://www.youtube.com/@vasil_gabunia", "_blank")}>
                 {content.subscribe} ↗
               </Button>

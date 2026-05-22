@@ -10,6 +10,24 @@ import { ChatWidget } from "@/components/sections/Chat";
 import { FAQSection } from "@/components/sections/FAQ";
 import { Footer }     from "@/components/sections/Footer";
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Vasil Gabunia",
+  alternateName: "ვასილ გაბუნია",
+  url: "https://vasilgabunia.com",
+  jobTitle: "Biologist and Researcher",
+  worksFor: {
+    "@type": "Organization",
+    name: "YouTube",
+  },
+  sameAs: [
+    "https://www.youtube.com/@vasil_gabunia",
+    "https://instagram.com/vaso_gabunia",
+  ],
+  knowsAbout: ["Biology", "Paleontology", "History", "Geography", "Science Communication"],
+};
+
 function Divider() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-4">
@@ -21,6 +39,10 @@ function Divider() {
 export default function Home() {
   return (
     <LanguageProvider>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main className="pt-20">
         <Hero />

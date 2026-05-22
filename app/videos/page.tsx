@@ -3,11 +3,14 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { LanguageProvider, useLanguage } from "@/components/LanguageProvider";
 import { ALL_VIDEOS, VideoTag } from "@/lib/videos";
 import { cn } from "@/lib/utils";
+import { SocialShare } from "@/components/ui/SocialShare";
+import { Play, X } from "lucide-react";
 
 type FilterTag = "all" | VideoTag;
 type SortMode = "newest" | "oldest";
@@ -83,6 +86,7 @@ function VideosContent() {
   const [activeTag, setActiveTag] = useState<FilterTag>(() => parseTag(searchParams.get("tag")));
   const [sortMode, setSortMode] = useState<SortMode>("newest");
   const [page, setPage] = useState(1);
+  const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const base = ALL_VIDEOS.filter((video) => {
@@ -97,6 +101,7 @@ function VideosContent() {
   const currentPage = Math.min(page, totalPages);
   const start = (currentPage - 1) * PAGE_SIZE;
   const items = filtered.slice(start, start + PAGE_SIZE);
+  const activeVideo = ALL_VIDEOS.find((video) => video.id === activeVideoId) ?? null;
 
   return (
     <>
@@ -105,7 +110,6 @@ function VideosContent() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
             <div>
-              <p className="font-mono text-[11px] text-brand-400/70 uppercase tracking-[0.25em] mb-3">{ui.subtitle}</p>
               <h1 className="font-display text-[clamp(34px,5.5vw,56px)] font-black text-white/90">{ui.title}</h1>
               <p className="text-white/35 text-sm mt-2">{ALL_VIDEOS.length} videos</p>
             </div>
@@ -173,17 +177,24 @@ function VideosContent() {
                   selectedId === video.id ? "border-brand-500/50 shadow-[0_0_0_1px_rgba(74,222,128,0.35)]" : "border-white/[0.06]"
                 )}
               >
-                <div className="aspect-video bg-black">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.id}`}
-                    title={video.title}
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                    className="w-full h-full"
+                <button
+                  onClick={() => setActiveVideoId(video.id)}
+                  className="relative block w-full aspect-video bg-black group"
+                >
+                  <Image
+                    src={video.thumbnail}
+                    alt={video.title}
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                   />
-                </div>
+                  <span className="absolute inset-0 bg-black/35 group-hover:bg-black/45 transition-colors" />
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg">
+                      <Play size={20} fill="currentColor" />
+                    </span>
+                  </span>
+                </button>
                 <div className="p-4 md:p-5">
                   <h3 className="font-display text-lg font-semibold text-white/90 mb-3 line-clamp-2">{video.title}</h3>
                   <div className="flex items-center justify-between gap-3">
@@ -242,6 +253,49 @@ function VideosContent() {
           )}
         </div>
       </main>
+      {activeVideo && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
+          <button
+            onClick={() => setActiveVideoId(null)}
+            className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+            aria-label="Close modal"
+          />
+          <div className="relative w-full max-w-5xl glass rounded-2xl border border-white/10 p-4 md:p-5">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h3 className="font-display text-lg md:text-xl text-white/90 line-clamp-2">{activeVideo.title}</h3>
+              <button
+                onClick={() => setActiveVideoId(null)}
+                className="w-9 h-9 rounded-lg border border-white/15 text-white/70 hover:text-white hover:border-white/30 flex items-center justify-center"
+                aria-label="Close"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="aspect-video rounded-xl overflow-hidden bg-black mb-4">
+              <iframe
+                src={`https://www.youtube.com/embed/${activeVideo.id}?autoplay=1`}
+                title={activeVideo.title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <a
+                href={activeVideo.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm border border-white/15 rounded-lg px-3 py-2 text-white/70 hover:text-white hover:border-white/30"
+              >
+                YouTube
+              </a>
+              <SocialShare url={activeVideo.url} title={activeVideo.title} />
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );

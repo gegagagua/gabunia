@@ -1,13 +1,15 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { LanguageProvider, useLanguage } from "@/components/LanguageProvider";
-import { ORDERED_NEWS, NewsCategory, getNewsCategoryLabels } from "@/lib/news";
+import { ORDERED_NEWS, NewsCategory, NewsItem, getNewsCategoryLabels } from "@/lib/news";
 import { cn } from "@/lib/utils";
+import { SocialShare } from "@/components/ui/SocialShare";
 
 type FilterCategory = "all" | NewsCategory;
 
@@ -17,6 +19,9 @@ const UI_TEXT = {
     subtitle: "სრული არქივი",
     search: "სიახლეების ძიება...",
     noResults: "სიახლე ვერ მოიძებნა",
+    loading: "იტვირთება...",
+    readMore: "დეტალურად",
+    source: "წყარო",
     prev: "წინა",
     next: "შემდეგი",
   },
@@ -25,6 +30,9 @@ const UI_TEXT = {
     subtitle: "Full archive",
     search: "Search news...",
     noResults: "No news found",
+    loading: "Loading...",
+    readMore: "Read more",
+    source: "Source",
     prev: "Prev",
     next: "Next",
   },
@@ -33,6 +41,9 @@ const UI_TEXT = {
     subtitle: "Полный архив",
     search: "Поиск новостей...",
     noResults: "Новости не найдены",
+    loading: "Загрузка...",
+    readMore: "Подробнее",
+    source: "Источник",
     prev: "Назад",
     next: "Далее",
   },
@@ -52,18 +63,42 @@ function NewsContent() {
   const labels = getNewsCategoryLabels(language);
   const ui = UI_TEXT[language];
   const searchParams = useSearchParams();
+  const [allNews, setAllNews] = useState<NewsItem[]>(ORDERED_NEWS);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [category, setCategory] = useState<FilterCategory>(() => parseCategory(searchParams.get("category")));
   const [page, setPage] = useState(1);
 
+  useEffect(() => {
+    let active = true;
+    fetch("/api/news")
+      .then((res) => res.json())
+      .then((payload: { items?: NewsItem[] }) => {
+        if (!active || !Array.isArray(payload.items)) {
+          return;
+        }
+        setAllNews(payload.items);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const filtered = useMemo(() => {
-    return ORDERED_NEWS.filter((item) => {
+    return allNews.filter((item) => {
       const byCategory = category === "all" ? true : item.category === category;
       const text = `${item.title[language]} ${item.summary[language]}`.toLowerCase();
       const byQuery = text.includes(query.toLowerCase());
       return byCategory && byQuery;
     });
-  }, [category, query, language]);
+  }, [allNews, category, query, language]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -108,11 +143,23 @@ function NewsContent() {
             </div>
           </div>
 
-          {items.length === 0 && <p className="text-white/45 text-center py-16">{ui.noResults}</p>}
+          {loading && <p className="text-white/45 text-center py-16">{ui.loading}</p>}
+          {!loading && items.length === 0 && <p className="text-white/45 text-center py-16">{ui.noResults}</p>}
 
           <div className="grid md:grid-cols-2 gap-5">
             {items.map((item) => (
               <article key={item.slug} className="glass rounded-2xl p-6 border border-white/[0.06]">
+                {item.images?.[0] && (
+                  <Image
+                    src={item.images[0]}
+                    alt={item.title[language]}
+                    width={1200}
+                    height={675}
+                    className="w-full h-52 object-cover rounded-xl border border-white/10 mb-4"
+                    loading="lazy"
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                  />
+                )}
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[10px] uppercase tracking-widest text-brand-300 bg-brand-500/15 border border-brand-500/30 rounded-md px-2 py-1">
                     {labels[item.category]}
@@ -121,9 +168,19 @@ function NewsContent() {
                 </div>
                 <h2 className="font-display text-xl text-white/90 mb-3">{item.title[language]}</h2>
                 <p className="text-sm text-white/55 leading-relaxed mb-4">{item.summary[language]}</p>
-                <Link href={`/news/${item.slug}`} className="text-sm text-brand-300 hover:text-brand-200 transition-colors">
-                  დეტალურად →
-                </Link>
+                <div className="flex items-center gap-4">
+                  <Link href={`/news/${item.slug}`} className="text-sm text-brand-300 hover:text-brand-200 transition-colors">
+                    {ui.readMore} →
+                  </Link>
+                  {item.sourceUrl && (
+                    <div className="ml-auto flex items-center gap-3">
+                      <a href={item.sourceUrl} target="_blank" rel="noreferrer" className="text-sm text-white/45 hover:text-white/70 transition-colors">
+                        {ui.source} ↗
+                      </a>
+                      <SocialShare url={item.sourceUrl} title={item.title[language]} />
+                    </div>
+                  )}
+                </div>
               </article>
             ))}
           </div>

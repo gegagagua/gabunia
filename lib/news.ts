@@ -9,6 +9,8 @@ export type NewsItem = {
   title: Record<SiteLanguage, string>;
   summary: Record<SiteLanguage, string>;
   content: Record<SiteLanguage, string[]>;
+  images?: string[];
+  sourceUrl?: string;
 };
 
 export const NEWS_ITEMS: NewsItem[] = [

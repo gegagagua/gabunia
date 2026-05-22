@@ -144,7 +144,7 @@ export function Quotes({ embedded = false }: { embedded?: boolean }) {
   }
 
   return (
-    <section className="relative px-6 pb-24 overflow-hidden">
+    <section className="relative px-6 pb-12 md:pb-24 overflow-hidden">
       <div className="max-w-4xl mx-auto relative">
         {contentBlock}
       </div>

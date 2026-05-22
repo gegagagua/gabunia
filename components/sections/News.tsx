@@ -1,10 +1,13 @@
 "use client";
 
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
-import { ORDERED_NEWS, getNewsCategoryLabels } from "@/lib/news";
+import { NewsItem, ORDERED_NEWS, getNewsCategoryLabels } from "@/lib/news";
+import { SocialShare } from "@/components/ui/SocialShare";
 
 const UI_TEXT = {
   ka: {
@@ -13,6 +16,7 @@ const UI_TEXT = {
     titleAccent: "სიახლეები",
     openAll: "ყველა სიახლე",
     details: "დეტალურად",
+    source: "წყარო",
   },
   en: {
     label: "News",
@@ -20,6 +24,7 @@ const UI_TEXT = {
     titleAccent: "updates",
     openAll: "All news",
     details: "Details",
+    source: "Source",
   },
   ru: {
     label: "Новости",
@@ -27,6 +32,7 @@ const UI_TEXT = {
     titleAccent: "новости",
     openAll: "Все новости",
     details: "Подробнее",
+    source: "Источник",
   },
 };
 
@@ -34,7 +40,23 @@ export function NewsSection() {
   const { language } = useLanguage();
   const labels = getNewsCategoryLabels(language);
   const ui = UI_TEXT[language];
-  const latest = ORDERED_NEWS.slice(0, 4);
+  const [latest, setLatest] = useState<NewsItem[]>(ORDERED_NEWS.slice(0, 4));
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/news")
+      .then((res) => res.json())
+      .then((payload: { items?: NewsItem[] }) => {
+        if (!active || !Array.isArray(payload.items)) {
+          return;
+        }
+        setLatest(payload.items.slice(0, 4));
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <section id="news" className="px-6 pb-24">
@@ -64,6 +86,17 @@ export function NewsSection() {
               transition={{ delay: index * 0.08, duration: 0.45 }}
               className="glass rounded-2xl p-6 border border-white/[0.06] hover:border-brand-500/30 transition-all"
             >
+              {item.images?.[0] && (
+                <Image
+                  src={item.images[0]}
+                  alt={item.title[language]}
+                  width={1200}
+                  height={675}
+                  className="w-full h-48 object-cover rounded-xl border border-white/10 mb-4"
+                  loading="lazy"
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                />
+              )}
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[10px] uppercase tracking-widest text-brand-300 bg-brand-500/15 border border-brand-500/30 rounded-md px-2 py-1">
                   {labels[item.category]}
@@ -79,6 +112,20 @@ export function NewsSection() {
                 {ui.details}
                 <ArrowUpRight size={14} />
               </Link>
+              {item.sourceUrl && (
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <a
+                    href={item.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-brand-300 hover:text-brand-200 transition-colors"
+                  >
+                    {ui.source}
+                    <ArrowUpRight size={14} />
+                  </a>
+                  <SocialShare url={item.sourceUrl} title={item.title[language]} />
+                </div>
+              )}
             </motion.article>
           ))}
         </div>

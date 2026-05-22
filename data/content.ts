@@ -11,6 +11,8 @@ type SiteContent = {
     brand: string;
     links: { href: string; label: string }[];
     subscribe: string;
+    donate: string;
+    donateUrl: string;
   };
   hero: {
     badge: string;
@@ -93,6 +95,8 @@ export const CONTENT: Record<SiteLanguage, SiteContent> = {
         { href: "#faq", label: "FAQ" },
       ],
       subscribe: "გამოიწერე",
+      donate: "დონაცია",
+      donateUrl: "https://paypal.me/irinagabunia",
     },
     hero: {
       badge: "🔬 ბიოლოგი & მკვლევარი · გერმანია",
@@ -195,6 +199,8 @@ export const CONTENT: Record<SiteLanguage, SiteContent> = {
         { q: "სად ცხოვრობს ვასილ გაბუნია?", a: "ვასო ამჟამად გერმანიაშია, მაგრამ კონტენტი ქართულ ენაზე და ქართველი მაყურებლისთვის იქმნება." },
         { q: "შეიძლება თქვენი ვიდეო სკოლაში გამოვიყენო?", a: "დიახ! კონტენტი სპეციალურად ადაპტირებულია სასწავლო პროცესისთვის." },
         { q: "როგორ შეიძლება დახმარება?", a: "PayPal-ით ან მერჩ მაღაზიის მეშვეობით. ყოველი დახმარება ახალ ვიდეოს ქმნის." },
+        { q: "რამდენად ხშირად იდება ახალი ვიდეოები?", a: "ახალი ვიდეოები რეგულარულად ქვეყნდება; ზუსტი დრო თემისა და კვლევის სირთულეზეა დამოკიდებული." },
+        { q: "შემიძლია ვიდეოს თემის შეთავაზება?", a: "რა თქმა უნდა. კომენტარებში ან სოციალური გვერდების მეშვეობით თემის იდეა მოგვწერეთ და სიამოვნებით განვიხილავთ." },
       ],
     },
     footer: {
@@ -213,9 +219,16 @@ export const CONTENT: Record<SiteLanguage, SiteContent> = {
         {
           title: "სოციალური",
           items: [
-            { label: "YouTube", href: "https://www.youtube.com/@vasil_gabunia" },
+            { label: "Donate", href: "https://paypal.me/irinagabunia" },
             { label: "Instagram", href: "https://instagram.com/vaso_gabunia" },
-            { label: "PayPal", href: "https://paypal.me/irinagabunia" },
+            { label: "TikTok", href: "https://www.tiktok.com/@vasogabuniaofficial" },
+          ],
+        },
+        {
+          title: "დამატებითი ინფორმაცია",
+          items: [
+            { label: "Email", href: "mailto:vasogab.youtu@gmail.com" },
+            { label: "YouTube", href: "https://www.youtube.com/@vasil_gabunia" },
           ],
         },
       ],
@@ -233,6 +246,8 @@ export const CONTENT: Record<SiteLanguage, SiteContent> = {
         { href: "#faq", label: "FAQ" },
       ],
       subscribe: "Subscribe",
+      donate: "Donate",
+      donateUrl: "https://paypal.me/irinagabunia",
     },
     hero: {
       badge: "🔬 Biologist & Researcher · Germany",
@@ -335,6 +350,8 @@ Frequently remind users to subscribe on YouTube.`,
         { q: "Where does Vasil Gabunia live?", a: "Vaso currently lives in Germany, but the content is created in Georgian for Georgian audiences." },
         { q: "Can I use your videos at school?", a: "Yes. The content is intentionally adapted for educational use." },
         { q: "How can I support the channel?", a: "You can help via PayPal or merch. Every contribution helps produce new videos." },
+        { q: "How often are new videos published?", a: "New videos are published regularly; exact timing depends on the topic and research depth." },
+        { q: "Can I suggest a topic for a video?", a: "Yes. Share your idea in comments or via social pages, and we will gladly review it." },
       ],
     },
     footer: {
@@ -353,9 +370,16 @@ Frequently remind users to subscribe on YouTube.`,
         {
           title: "Social",
           items: [
-            { label: "YouTube", href: "https://www.youtube.com/@vasil_gabunia" },
+            { label: "Donate", href: "https://paypal.me/irinagabunia" },
             { label: "Instagram", href: "https://instagram.com/vaso_gabunia" },
-            { label: "PayPal", href: "https://paypal.me/irinagabunia" },
+            { label: "TikTok", href: "https://www.tiktok.com/@vasogabuniaofficial" },
+          ],
+        },
+        {
+          title: "More info",
+          items: [
+            { label: "Email", href: "mailto:vasogab.youtu@gmail.com" },
+            { label: "YouTube", href: "https://www.youtube.com/@vasil_gabunia" },
           ],
         },
       ],
@@ -373,6 +397,8 @@ Frequently remind users to subscribe on YouTube.`,
         { href: "#faq", label: "FAQ" },
       ],
       subscribe: "Подписаться",
+      donate: "Донат",
+      donateUrl: "https://paypal.me/irinagabunia",
     },
     hero: {
       badge: "🔬 Биолог и исследователь · Германия",
@@ -475,6 +501,8 @@ Frequently remind users to subscribe on YouTube.`,
         { q: "Где живет Васил Габуния?", a: "Сейчас Васо живет в Германии, но контент создается на грузинском языке для грузинской аудитории." },
         { q: "Можно ли использовать ваши видео в школе?", a: "Да. Контент специально адаптирован для образовательного процесса." },
         { q: "Как можно поддержать канал?", a: "Через PayPal или мерч. Каждая поддержка помогает создавать новые видео." },
+        { q: "Как часто выходят новые видео?", a: "Новые видео выходят регулярно; точный график зависит от темы и глубины исследования." },
+        { q: "Можно предложить тему для нового видео?", a: "Да, конечно. Напишите идею в комментариях или через соцсети, и мы обязательно рассмотрим." },
       ],
     },
     footer: {
@@ -493,9 +521,16 @@ Frequently remind users to subscribe on YouTube.`,
         {
           title: "Соцсети",
           items: [
-            { label: "YouTube", href: "https://www.youtube.com/@vasil_gabunia" },
+            { label: "Donate", href: "https://paypal.me/irinagabunia" },
             { label: "Instagram", href: "https://instagram.com/vaso_gabunia" },
-            { label: "PayPal", href: "https://paypal.me/irinagabunia" },
+            { label: "TikTok", href: "https://www.tiktok.com/@vasogabuniaofficial" },
+          ],
+        },
+        {
+          title: "Дополнительно",
+          items: [
+            { label: "Email", href: "mailto:vasogab.youtu@gmail.com" },
+            { label: "YouTube", href: "https://www.youtube.com/@vasil_gabunia" },
           ],
         },
       ],

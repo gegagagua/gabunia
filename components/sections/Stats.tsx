@@ -69,7 +69,7 @@ export function Stats() {
   const stats = CONTENT[language].stats;
 
   return (
-    <section className="relative px-6 pb-24">
+    <section className="relative px-6 pb-12 md:pb-24">
       <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((s, i) => <StatCard key={s.label} {...s} icon={ICONS[i]} i={i} />)}
       </div>
